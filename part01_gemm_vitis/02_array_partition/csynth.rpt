@@ -1,0 +1,808 @@
+
+
+================================================================
+== Synthesis Summary Report of 'gemm_kernel'
+================================================================
++ General Information: 
+    * Date:           Wed Dec 25 17:06:16 2024
+    * Version:        2024.2 (Build 5238294 on Nov  8 2024)
+    * Project:        gemm_vitis
+    * Solution:       hls (Vivado IP Flow Target)
+    * Product family: zynq
+    * Target device:  xc7z020-clg400-1
+    
+
++ Performance & Resource Estimates: 
+    
+    PS: '+' for module; 'o' for loop; '*' for dataflow
+    +-----------------------------------------+--------+-------+---------+-----------+----------+---------+------+----------+----------+----------+-------------+-------------+-----+
+    |                 Modules                 |  Issue |       | Latency |  Latency  | Iteration|         | Trip |          |          |          |             |             |     |
+    |                 & Loops                 |  Type  | Slack | (cycles)|    (ns)   |  Latency | Interval| Count| Pipelined|   BRAM   |    DSP   |      FF     |     LUT     | URAM|
+    +-----------------------------------------+--------+-------+---------+-----------+----------+---------+------+----------+----------+----------+-------------+-------------+-----+
+    |+ gemm_kernel                            |  Timing|  -0.91|   346510|  3.465e+06|         -|   346511|     -|        no|  34 (12%)|  40 (18%)|  66468 (62%)|  45226 (85%)|    -|
+    | o compute_outer                         |       -|   7.30|   346496|  3.465e+06|      2707|        -|   128|        no|         -|         -|            -|            -|    -|
+    |  + gemm_kernel_Pipeline_compute_middle  |  Timing|  -0.91|     2688|  2.688e+04|         -|     2688|     -|        no|         -|  40 (18%)|  36555 (34%)|  22728 (42%)|    -|
+    |   o compute_middle                      |      II|   7.30|     2686|  2.686e+04|       655|       16|   128|       yes|         -|         -|            -|            -|    -|
+    +-----------------------------------------+--------+-------+---------+-----------+----------+---------+------+----------+----------+----------+-------------+-------------+-----+
+
+
+================================================================
+== HW Interfaces
+================================================================
+* M_AXI
++---------------+------------+------------+---------------+---------+--------+----------+-----------+--------------+--------------+-------------+-------------+-------------------+
+| Interface     | Read/Write | Data Width | Address Width | Latency | Offset | Register | Max Widen | Max Read     | Max Write    | Num Read    | Num Write   | Resource Estimate |
+|               |            | (SW->HW)   |               |         |        |          | Bitwidth  | Burst Length | Burst Length | Outstanding | Outstanding |                   |
++---------------+------------+------------+---------------+---------+--------+----------+-----------+--------------+--------------+-------------+-------------+-------------------+
+| m_axi_gmem0_0 | READ_ONLY  | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          | BRAM=2            |
+| m_axi_gmem0_1 | READ_ONLY  | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          | BRAM=2            |
+| m_axi_gmem0_2 | READ_ONLY  | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          | BRAM=2            |
+| m_axi_gmem0_3 | READ_ONLY  | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          | BRAM=2            |
+| m_axi_gmem0_4 | READ_ONLY  | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          | BRAM=2            |
+| m_axi_gmem0_5 | READ_ONLY  | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          | BRAM=2            |
+| m_axi_gmem0_6 | READ_ONLY  | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          | BRAM=2            |
+| m_axi_gmem0_7 | READ_ONLY  | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          | BRAM=2            |
+| m_axi_gmem1_0 | READ_ONLY  | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          | BRAM=2            |
+| m_axi_gmem1_1 | READ_ONLY  | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          | BRAM=2            |
+| m_axi_gmem1_2 | READ_ONLY  | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          | BRAM=2            |
+| m_axi_gmem1_3 | READ_ONLY  | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          | BRAM=2            |
+| m_axi_gmem1_4 | READ_ONLY  | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          | BRAM=2            |
+| m_axi_gmem1_5 | READ_ONLY  | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          | BRAM=2            |
+| m_axi_gmem1_6 | READ_ONLY  | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          | BRAM=2            |
+| m_axi_gmem1_7 | READ_ONLY  | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          | BRAM=2            |
+| m_axi_gmem2   | WRITE_ONLY | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          | BRAM=2            |
++---------------+------------+------------+---------------+---------+--------+----------+-----------+--------------+--------------+-------------+-------------+-------------------+
+
+* S_AXILITE Interfaces
++-----------------+------------+---------------+--------+----------+
+| Interface       | Data Width | Address Width | Offset | Register |
++-----------------+------------+---------------+--------+----------+
+| s_axi_control   | 32         | 4             |        |          |
+| s_axi_control_r | 32         | 8             | 16     | 0        |
++-----------------+------------+---------------+--------+----------+
+
+* S_AXILITE Registers
++-----------------+----------+--------+-------+--------+----------------------------------+----------------------------------------------------------------------+
+| Interface       | Register | Offset | Width | Access | Description                      | Bit Fields                                                           |
++-----------------+----------+--------+-------+--------+----------------------------------+----------------------------------------------------------------------+
+| s_axi_control   | CTRL     | 0x00   | 32    | RW     | Control signals                  | 0=AP_START 1=AP_DONE 2=AP_IDLE 3=AP_READY 7=AUTO_RESTART 9=INTERRUPT |
+| s_axi_control   | GIER     | 0x04   | 32    | RW     | Global Interrupt Enable Register | 0=Enable                                                             |
+| s_axi_control   | IP_IER   | 0x08   | 32    | RW     | IP Interrupt Enable Register     | 0=CHAN0_INT_EN 1=CHAN1_INT_EN                                        |
+| s_axi_control   | IP_ISR   | 0x0c   | 32    | RW     | IP Interrupt Status Register     | 0=CHAN0_INT_ST 1=CHAN1_INT_ST                                        |
+| s_axi_control_r | A_0_1    | 0x10   | 32    | W      | Data signal of A_0               |                                                                      |
+| s_axi_control_r | A_0_2    | 0x14   | 32    | W      | Data signal of A_0               |                                                                      |
+| s_axi_control_r | A_1_1    | 0x1c   | 32    | W      | Data signal of A_1               |                                                                      |
+| s_axi_control_r | A_1_2    | 0x20   | 32    | W      | Data signal of A_1               |                                                                      |
+| s_axi_control_r | A_2_1    | 0x28   | 32    | W      | Data signal of A_2               |                                                                      |
+| s_axi_control_r | A_2_2    | 0x2c   | 32    | W      | Data signal of A_2               |                                                                      |
+| s_axi_control_r | A_3_1    | 0x34   | 32    | W      | Data signal of A_3               |                                                                      |
+| s_axi_control_r | A_3_2    | 0x38   | 32    | W      | Data signal of A_3               |                                                                      |
+| s_axi_control_r | A_4_1    | 0x40   | 32    | W      | Data signal of A_4               |                                                                      |
+| s_axi_control_r | A_4_2    | 0x44   | 32    | W      | Data signal of A_4               |                                                                      |
+| s_axi_control_r | A_5_1    | 0x4c   | 32    | W      | Data signal of A_5               |                                                                      |
+| s_axi_control_r | A_5_2    | 0x50   | 32    | W      | Data signal of A_5               |                                                                      |
+| s_axi_control_r | A_6_1    | 0x58   | 32    | W      | Data signal of A_6               |                                                                      |
+| s_axi_control_r | A_6_2    | 0x5c   | 32    | W      | Data signal of A_6               |                                                                      |
+| s_axi_control_r | A_7_1    | 0x64   | 32    | W      | Data signal of A_7               |                                                                      |
+| s_axi_control_r | A_7_2    | 0x68   | 32    | W      | Data signal of A_7               |                                                                      |
+| s_axi_control_r | B_0_1    | 0x70   | 32    | W      | Data signal of B_0               |                                                                      |
+| s_axi_control_r | B_0_2    | 0x74   | 32    | W      | Data signal of B_0               |                                                                      |
+| s_axi_control_r | B_1_1    | 0x7c   | 32    | W      | Data signal of B_1               |                                                                      |
+| s_axi_control_r | B_1_2    | 0x80   | 32    | W      | Data signal of B_1               |                                                                      |
+| s_axi_control_r | B_2_1    | 0x88   | 32    | W      | Data signal of B_2               |                                                                      |
+| s_axi_control_r | B_2_2    | 0x8c   | 32    | W      | Data signal of B_2               |                                                                      |
+| s_axi_control_r | B_3_1    | 0x94   | 32    | W      | Data signal of B_3               |                                                                      |
+| s_axi_control_r | B_3_2    | 0x98   | 32    | W      | Data signal of B_3               |                                                                      |
+| s_axi_control_r | B_4_1    | 0xa0   | 32    | W      | Data signal of B_4               |                                                                      |
+| s_axi_control_r | B_4_2    | 0xa4   | 32    | W      | Data signal of B_4               |                                                                      |
+| s_axi_control_r | B_5_1    | 0xac   | 32    | W      | Data signal of B_5               |                                                                      |
+| s_axi_control_r | B_5_2    | 0xb0   | 32    | W      | Data signal of B_5               |                                                                      |
+| s_axi_control_r | B_6_1    | 0xb8   | 32    | W      | Data signal of B_6               |                                                                      |
+| s_axi_control_r | B_6_2    | 0xbc   | 32    | W      | Data signal of B_6               |                                                                      |
+| s_axi_control_r | B_7_1    | 0xc4   | 32    | W      | Data signal of B_7               |                                                                      |
+| s_axi_control_r | B_7_2    | 0xc8   | 32    | W      | Data signal of B_7               |                                                                      |
+| s_axi_control_r | C_1      | 0xd0   | 32    | W      | Data signal of C                 |                                                                      |
+| s_axi_control_r | C_2      | 0xd4   | 32    | W      | Data signal of C                 |                                                                      |
++-----------------+----------+--------+-------+--------+----------------------------------+----------------------------------------------------------------------+
+
+* TOP LEVEL CONTROL
++-----------+------------+-----------+
+| Interface | Type       | Ports     |
++-----------+------------+-----------+
+| ap_clk    | clock      | ap_clk    |
+| ap_rst_n  | reset      | ap_rst_n  |
+| interrupt | interrupt  | interrupt |
+| ap_ctrl   | ap_ctrl_hs |           |
++-----------+------------+-----------+
+
+
+================================================================
+== SW I/O Information
+================================================================
+* Top Function Arguments
++----------+-----------+----------+
+| Argument | Direction | Datatype |
++----------+-----------+----------+
+| A        | in        | float*   |
+| B        | in        | float*   |
+| C        | out       | float*   |
++----------+-----------+----------+
+
+* SW-to-HW Mapping
++----------+-----------------+-----------+----------+-------------------------------+
+| Argument | HW Interface    | HW Type   | HW Usage | HW Info                       |
++----------+-----------------+-----------+----------+-------------------------------+
+| A        | m_axi_gmem0_0   | interface |          | channel=0                     |
+| A        | s_axi_control_r | interface | offset   |                               |
+| A        | m_axi_gmem0_1   | interface |          | channel=0                     |
+| A        | s_axi_control_r | interface | offset   |                               |
+| A        | m_axi_gmem0_2   | interface |          | channel=0                     |
+| A        | s_axi_control_r | interface | offset   |                               |
+| A        | m_axi_gmem0_3   | interface |          | channel=0                     |
+| A        | s_axi_control_r | interface | offset   |                               |
+| A        | m_axi_gmem0_4   | interface |          | channel=0                     |
+| A        | s_axi_control_r | interface | offset   |                               |
+| A        | m_axi_gmem0_5   | interface |          | channel=0                     |
+| A        | s_axi_control_r | interface | offset   |                               |
+| A        | m_axi_gmem0_6   | interface |          | channel=0                     |
+| A        | s_axi_control_r | interface | offset   |                               |
+| A        | m_axi_gmem0_7   | interface |          | channel=0                     |
+| A        | s_axi_control_r | interface | offset   |                               |
+| B        | m_axi_gmem1_0   | interface |          | channel=0                     |
+| B        | s_axi_control_r | interface | offset   |                               |
+| B        | m_axi_gmem1_1   | interface |          | channel=0                     |
+| B        | s_axi_control_r | interface | offset   |                               |
+| B        | m_axi_gmem1_2   | interface |          | channel=0                     |
+| B        | s_axi_control_r | interface | offset   |                               |
+| B        | m_axi_gmem1_3   | interface |          | channel=0                     |
+| B        | s_axi_control_r | interface | offset   |                               |
+| B        | m_axi_gmem1_4   | interface |          | channel=0                     |
+| B        | s_axi_control_r | interface | offset   |                               |
+| B        | m_axi_gmem1_5   | interface |          | channel=0                     |
+| B        | s_axi_control_r | interface | offset   |                               |
+| B        | m_axi_gmem1_6   | interface |          | channel=0                     |
+| B        | s_axi_control_r | interface | offset   |                               |
+| B        | m_axi_gmem1_7   | interface |          | channel=0                     |
+| B        | s_axi_control_r | interface | offset   |                               |
+| C        | m_axi_gmem2     | interface |          | channel=0                     |
+| C        | s_axi_control_r | register  | offset   | name=C_1 offset=0xd0 range=32 |
+| C        | s_axi_control_r | register  | offset   | name=C_2 offset=0xd4 range=32 |
++----------+-----------------+-----------+----------+-------------------------------+
+
+
+================================================================
+== M_AXI Burst Information
+================================================================
+ Note: All burst requests might be further partitioned into multiple requests during RTL generation based on max_read_burst_length or max_write_burst_length settings.
+
+* Inferred Burst Summary
++---------------+-----------+--------+-------+---------------+----------------+
+| HW Interface  | Direction | Length | Width | Loop          | Loop Location  |
++---------------+-----------+--------+-------+---------------+----------------+
+| m_axi_gmem0_0 | read      | 2048   | 32    | compute_outer | gemm.cpp:19:17 |
+| m_axi_gmem0_1 | read      | 2048   | 32    | compute_outer | gemm.cpp:19:17 |
+| m_axi_gmem0_2 | read      | 2048   | 32    | compute_outer | gemm.cpp:19:17 |
+| m_axi_gmem0_3 | read      | 2048   | 32    | compute_outer | gemm.cpp:19:17 |
+| m_axi_gmem0_4 | read      | 2048   | 32    | compute_outer | gemm.cpp:19:17 |
+| m_axi_gmem0_5 | read      | 2048   | 32    | compute_outer | gemm.cpp:19:17 |
+| m_axi_gmem0_6 | read      | 2048   | 32    | compute_outer | gemm.cpp:19:17 |
+| m_axi_gmem0_7 | read      | 2048   | 32    | compute_outer | gemm.cpp:19:17 |
+| m_axi_gmem2   | write     | 16384  | 32    | compute_outer | gemm.cpp:19:17 |
++---------------+-----------+--------+-------+---------------+----------------+
+
+* All M_AXI Variable Accesses
++---------------+----------+-----------------+----------------------------------------------------------------------------------------+--------------+--------+----------------+----------------+------------+---------------------------------------------------------------------------------------------------------+
+| HW Interface  | Variable | Access Location | Direction                                                                              | Burst Status | Length | Loop           | Loop Location  | Resolution | Problem                                                                                                 |
++---------------+----------+-----------------+----------------------------------------------------------------------------------------+--------------+--------+----------------+----------------+------------+---------------------------------------------------------------------------------------------------------+
+| m_axi_gmem0_0 | A_0      | gemm.cpp:19:17  | read                                                                                   | Widen Fail   |        | compute_outer  | gemm.cpp:19:17 | 214-353    | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 |
+| m_axi_gmem0_0 | A_0      | gemm.cpp:19:17  | islist read read read read read read read read read read read read read read read read | Inferred     | 2048   | compute_outer  | gemm.cpp:19:17 |            |                                                                                                         |
+| m_axi_gmem0_1 | A_1      | gemm.cpp:19:17  | read                                                                                   | Widen Fail   |        | compute_outer  | gemm.cpp:19:17 | 214-353    | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 |
+| m_axi_gmem0_1 | A_1      | gemm.cpp:19:17  | islist read read read read read read read read read read read read read read read read | Inferred     | 2048   | compute_outer  | gemm.cpp:19:17 |            |                                                                                                         |
+| m_axi_gmem0_2 | A_2      | gemm.cpp:19:17  | read                                                                                   | Widen Fail   |        | compute_outer  | gemm.cpp:19:17 | 214-353    | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 |
+| m_axi_gmem0_2 | A_2      | gemm.cpp:19:17  | islist read read read read read read read read read read read read read read read read | Inferred     | 2048   | compute_outer  | gemm.cpp:19:17 |            |                                                                                                         |
+| m_axi_gmem0_3 | A_3      | gemm.cpp:19:17  | read                                                                                   | Widen Fail   |        | compute_outer  | gemm.cpp:19:17 | 214-353    | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 |
+| m_axi_gmem0_3 | A_3      | gemm.cpp:19:17  | islist read read read read read read read read read read read read read read read read | Inferred     | 2048   | compute_outer  | gemm.cpp:19:17 |            |                                                                                                         |
+| m_axi_gmem0_4 | A_4      | gemm.cpp:19:17  | read                                                                                   | Widen Fail   |        | compute_outer  | gemm.cpp:19:17 | 214-353    | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 |
+| m_axi_gmem0_4 | A_4      | gemm.cpp:19:17  | islist read read read read read read read read read read read read read read read read | Inferred     | 2048   | compute_outer  | gemm.cpp:19:17 |            |                                                                                                         |
+| m_axi_gmem0_5 | A_5      | gemm.cpp:19:17  | read                                                                                   | Widen Fail   |        | compute_outer  | gemm.cpp:19:17 | 214-353    | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 |
+| m_axi_gmem0_5 | A_5      | gemm.cpp:19:17  | islist read read read read read read read read read read read read read read read read | Inferred     | 2048   | compute_outer  | gemm.cpp:19:17 |            |                                                                                                         |
+| m_axi_gmem0_6 | A_6      | gemm.cpp:19:17  | read                                                                                   | Widen Fail   |        | compute_outer  | gemm.cpp:19:17 | 214-353    | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 |
+| m_axi_gmem0_6 | A_6      | gemm.cpp:19:17  | islist read read read read read read read read read read read read read read read read | Inferred     | 2048   | compute_outer  | gemm.cpp:19:17 |            |                                                                                                         |
+| m_axi_gmem0_7 | A_7      | gemm.cpp:19:17  | read                                                                                   | Widen Fail   |        | compute_outer  | gemm.cpp:19:17 | 214-353    | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 |
+| m_axi_gmem0_7 | A_7      | gemm.cpp:19:17  | islist read read read read read read read read read read read read read read read read | Inferred     | 2048   | compute_outer  | gemm.cpp:19:17 |            |                                                                                                         |
+| m_axi_gmem1_0 |          | gemm.cpp:20:25  | read                                                                                   | Fail         |        |                |                | 214-224    | Could not burst due to multiple potential reads to the same bundle in the same region.                  |
+| m_axi_gmem1_0 | B_0      | gemm.cpp:24:34  | read                                                                                   | Widen Fail   |        | compute_middle | gemm.cpp:20:25 | 214-353    | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 |
+| m_axi_gmem1_0 | B_0      | gemm.cpp:24:34  | read                                                                                   | Inferred     | 128    | compute_middle | gemm.cpp:20:25 |            |                                                                                                         |
+| m_axi_gmem1_1 |          | gemm.cpp:20:25  | read                                                                                   | Fail         |        |                |                | 214-224    | Could not burst due to multiple potential reads to the same bundle in the same region.                  |
+| m_axi_gmem1_1 | B_1      | gemm.cpp:24:34  | read                                                                                   | Widen Fail   |        | compute_middle | gemm.cpp:20:25 | 214-353    | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 |
+| m_axi_gmem1_1 | B_1      | gemm.cpp:24:34  | read                                                                                   | Inferred     | 128    | compute_middle | gemm.cpp:20:25 |            |                                                                                                         |
+| m_axi_gmem1_2 |          | gemm.cpp:20:25  | read                                                                                   | Fail         |        |                |                | 214-224    | Could not burst due to multiple potential reads to the same bundle in the same region.                  |
+| m_axi_gmem1_2 | B_2      | gemm.cpp:24:34  | read                                                                                   | Widen Fail   |        | compute_middle | gemm.cpp:20:25 | 214-353    | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 |
+| m_axi_gmem1_2 | B_2      | gemm.cpp:24:34  | read                                                                                   | Inferred     | 128    | compute_middle | gemm.cpp:20:25 |            |                                                                                                         |
+| m_axi_gmem1_3 |          | gemm.cpp:20:25  | read                                                                                   | Fail         |        |                |                | 214-224    | Could not burst due to multiple potential reads to the same bundle in the same region.                  |
+| m_axi_gmem1_3 | B_3      | gemm.cpp:24:34  | read                                                                                   | Widen Fail   |        | compute_middle | gemm.cpp:20:25 | 214-353    | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 |
+| m_axi_gmem1_3 | B_3      | gemm.cpp:24:34  | read                                                                                   | Inferred     | 128    | compute_middle | gemm.cpp:20:25 |            |                                                                                                         |
+| m_axi_gmem1_4 |          | gemm.cpp:20:25  | read                                                                                   | Fail         |        |                |                | 214-224    | Could not burst due to multiple potential reads to the same bundle in the same region.                  |
+| m_axi_gmem1_4 | B_4      | gemm.cpp:24:34  | read                                                                                   | Widen Fail   |        | compute_middle | gemm.cpp:20:25 | 214-353    | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 |
+| m_axi_gmem1_4 | B_4      | gemm.cpp:24:34  | read                                                                                   | Inferred     | 128    | compute_middle | gemm.cpp:20:25 |            |                                                                                                         |
+| m_axi_gmem1_5 |          | gemm.cpp:20:25  | read                                                                                   | Fail         |        |                |                | 214-224    | Could not burst due to multiple potential reads to the same bundle in the same region.                  |
+| m_axi_gmem1_5 | B_5      | gemm.cpp:24:34  | read                                                                                   | Widen Fail   |        | compute_middle | gemm.cpp:20:25 | 214-353    | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 |
+| m_axi_gmem1_5 | B_5      | gemm.cpp:24:34  | read                                                                                   | Inferred     | 128    | compute_middle | gemm.cpp:20:25 |            |                                                                                                         |
+| m_axi_gmem1_6 |          | gemm.cpp:20:25  | read                                                                                   | Fail         |        |                |                | 214-224    | Could not burst due to multiple potential reads to the same bundle in the same region.                  |
+| m_axi_gmem1_6 | B_6      | gemm.cpp:24:34  | read                                                                                   | Widen Fail   |        | compute_middle | gemm.cpp:20:25 | 214-353    | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 |
+| m_axi_gmem1_6 | B_6      | gemm.cpp:24:34  | read                                                                                   | Inferred     | 128    | compute_middle | gemm.cpp:20:25 |            |                                                                                                         |
+| m_axi_gmem1_7 |          | gemm.cpp:20:25  | read                                                                                   | Fail         |        |                |                | 214-224    | Could not burst due to multiple potential reads to the same bundle in the same region.                  |
+| m_axi_gmem1_7 | B_7      | gemm.cpp:24:34  | read                                                                                   | Widen Fail   |        | compute_middle | gemm.cpp:20:25 | 214-353    | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 |
+| m_axi_gmem1_7 | B_7      | gemm.cpp:24:34  | read                                                                                   | Inferred     | 128    | compute_middle | gemm.cpp:20:25 |            |                                                                                                         |
+| m_axi_gmem2   | C        | gemm.cpp:26:21  | write                                                                                  | Widen Fail   |        | compute_middle | gemm.cpp:20:25 | 214-353    | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 |
+| m_axi_gmem2   | C        | gemm.cpp:26:21  | write                                                                                  | Inferred     | 16384  | compute_outer  | gemm.cpp:19:17 |            |                                                                                                         |
++---------------+----------+-----------------+----------------------------------------------------------------------------------------+--------------+--------+----------------+----------------+------------+---------------------------------------------------------------------------------------------------------+
+
+    * Resolution URL: docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.2%20English&url=ug1448-hls-guidance&resourceid=XXX-YYY.html (replace XXX-YYY with column value)
+
+================================================================
+== Bind Op Report
+================================================================
++----------------------------------------+-----+--------+--------------+-------+---------+---------+
+| Name                                   | DSP | Pragma | Variable     | Op    | Impl    | Latency |
++----------------------------------------+-----+--------+--------------+-------+---------+---------+
+| + gemm_kernel                          | 40  |        |              |       |         |         |
+|   add_ln19_fu_976_p2                   |     |        | add_ln19     | add   | fabric  | 0       |
+|   add_ln19_1_fu_981_p2                 |     |        | add_ln19_1   | add   | fabric  | 0       |
+|   add_ln19_2_fu_986_p2                 |     |        | add_ln19_2   | add   | fabric  | 0       |
+|   add_ln19_3_fu_991_p2                 |     |        | add_ln19_3   | add   | fabric  | 0       |
+|   add_ln19_4_fu_996_p2                 |     |        | add_ln19_4   | add   | fabric  | 0       |
+|   add_ln19_5_fu_1001_p2                |     |        | add_ln19_5   | add   | fabric  | 0       |
+|   add_ln19_6_fu_1006_p2                |     |        | add_ln19_6   | add   | fabric  | 0       |
+|   add_ln19_7_fu_1011_p2                |     |        | add_ln19_7   | add   | fabric  | 0       |
+|   add_ln19_8_fu_1016_p2                |     |        | add_ln19_8   | add   | fabric  | 0       |
+|   add_ln19_9_fu_1021_p2                |     |        | add_ln19_9   | add   | fabric  | 0       |
+|   add_ln19_10_fu_1026_p2               |     |        | add_ln19_10  | add   | fabric  | 0       |
+|   add_ln19_11_fu_1031_p2               |     |        | add_ln19_11  | add   | fabric  | 0       |
+|   add_ln19_12_fu_1036_p2               |     |        | add_ln19_12  | add   | fabric  | 0       |
+|   add_ln19_13_fu_1041_p2               |     |        | add_ln19_13  | add   | fabric  | 0       |
+|   add_ln19_14_fu_1046_p2               |     |        | add_ln19_14  | add   | fabric  | 0       |
+|   add_ln19_15_fu_1051_p2               |     |        | add_ln19_15  | add   | fabric  | 0       |
+|   add_ln19_16_fu_1056_p2               |     |        | add_ln19_16  | add   | fabric  | 0       |
+|   add_ln19_17_fu_1061_p2               |     |        | add_ln19_17  | add   | fabric  | 0       |
+|   add_ln19_18_fu_1066_p2               |     |        | add_ln19_18  | add   | fabric  | 0       |
+|   add_ln19_19_fu_1071_p2               |     |        | add_ln19_19  | add   | fabric  | 0       |
+|   add_ln19_20_fu_1076_p2               |     |        | add_ln19_20  | add   | fabric  | 0       |
+|   add_ln19_21_fu_1081_p2               |     |        | add_ln19_21  | add   | fabric  | 0       |
+|   add_ln19_22_fu_1086_p2               |     |        | add_ln19_22  | add   | fabric  | 0       |
+|   add_ln19_23_fu_1091_p2               |     |        | add_ln19_23  | add   | fabric  | 0       |
+|   add_ln19_24_fu_1096_p2               |     |        | add_ln19_24  | add   | fabric  | 0       |
+|   add_ln19_25_fu_1101_p2               |     |        | add_ln19_25  | add   | fabric  | 0       |
+|   add_ln19_26_fu_1106_p2               |     |        | add_ln19_26  | add   | fabric  | 0       |
+|   add_ln19_27_fu_1111_p2               |     |        | add_ln19_27  | add   | fabric  | 0       |
+|   add_ln19_28_fu_1116_p2               |     |        | add_ln19_28  | add   | fabric  | 0       |
+|   add_ln19_29_fu_1121_p2               |     |        | add_ln19_29  | add   | fabric  | 0       |
+|   add_ln19_30_fu_1126_p2               |     |        | add_ln19_30  | add   | fabric  | 0       |
+|   add_ln19_31_fu_1131_p2               |     |        | add_ln19_31  | add   | fabric  | 0       |
+|   add_ln19_32_fu_1136_p2               |     |        | add_ln19_32  | add   | fabric  | 0       |
+|   add_ln19_33_fu_1141_p2               |     |        | add_ln19_33  | add   | fabric  | 0       |
+|   add_ln19_34_fu_1146_p2               |     |        | add_ln19_34  | add   | fabric  | 0       |
+|   add_ln19_35_fu_1151_p2               |     |        | add_ln19_35  | add   | fabric  | 0       |
+|   add_ln19_36_fu_1156_p2               |     |        | add_ln19_36  | add   | fabric  | 0       |
+|   add_ln19_37_fu_1161_p2               |     |        | add_ln19_37  | add   | fabric  | 0       |
+|   add_ln19_38_fu_1166_p2               |     |        | add_ln19_38  | add   | fabric  | 0       |
+|   add_ln19_39_fu_1171_p2               |     |        | add_ln19_39  | add   | fabric  | 0       |
+|   add_ln19_40_fu_1176_p2               |     |        | add_ln19_40  | add   | fabric  | 0       |
+|   add_ln19_41_fu_1181_p2               |     |        | add_ln19_41  | add   | fabric  | 0       |
+|   add_ln19_42_fu_1186_p2               |     |        | add_ln19_42  | add   | fabric  | 0       |
+|   add_ln19_43_fu_1191_p2               |     |        | add_ln19_43  | add   | fabric  | 0       |
+|   add_ln19_44_fu_1196_p2               |     |        | add_ln19_44  | add   | fabric  | 0       |
+|   add_ln19_45_fu_1201_p2               |     |        | add_ln19_45  | add   | fabric  | 0       |
+|   add_ln19_46_fu_1206_p2               |     |        | add_ln19_46  | add   | fabric  | 0       |
+|   add_ln19_47_fu_1211_p2               |     |        | add_ln19_47  | add   | fabric  | 0       |
+|   add_ln19_48_fu_1216_p2               |     |        | add_ln19_48  | add   | fabric  | 0       |
+|   add_ln19_49_fu_1221_p2               |     |        | add_ln19_49  | add   | fabric  | 0       |
+|   add_ln19_50_fu_1226_p2               |     |        | add_ln19_50  | add   | fabric  | 0       |
+|   add_ln19_51_fu_1231_p2               |     |        | add_ln19_51  | add   | fabric  | 0       |
+|   add_ln19_52_fu_1236_p2               |     |        | add_ln19_52  | add   | fabric  | 0       |
+|   add_ln19_53_fu_1241_p2               |     |        | add_ln19_53  | add   | fabric  | 0       |
+|   add_ln19_54_fu_1246_p2               |     |        | add_ln19_54  | add   | fabric  | 0       |
+|   add_ln19_55_fu_1251_p2               |     |        | add_ln19_55  | add   | fabric  | 0       |
+|   add_ln19_56_fu_1256_p2               |     |        | add_ln19_56  | add   | fabric  | 0       |
+|   add_ln19_57_fu_1261_p2               |     |        | add_ln19_57  | add   | fabric  | 0       |
+|   add_ln19_58_fu_1266_p2               |     |        | add_ln19_58  | add   | fabric  | 0       |
+|   add_ln19_59_fu_1271_p2               |     |        | add_ln19_59  | add   | fabric  | 0       |
+|   add_ln19_60_fu_1276_p2               |     |        | add_ln19_60  | add   | fabric  | 0       |
+|   add_ln19_61_fu_1281_p2               |     |        | add_ln19_61  | add   | fabric  | 0       |
+|   add_ln19_62_fu_1286_p2               |     |        | add_ln19_62  | add   | fabric  | 0       |
+|   add_ln19_63_fu_1291_p2               |     |        | add_ln19_63  | add   | fabric  | 0       |
+|   add_ln19_64_fu_1296_p2               |     |        | add_ln19_64  | add   | fabric  | 0       |
+|   add_ln19_65_fu_1301_p2               |     |        | add_ln19_65  | add   | fabric  | 0       |
+|   add_ln19_66_fu_1306_p2               |     |        | add_ln19_66  | add   | fabric  | 0       |
+|   add_ln19_67_fu_1311_p2               |     |        | add_ln19_67  | add   | fabric  | 0       |
+|   add_ln19_68_fu_1316_p2               |     |        | add_ln19_68  | add   | fabric  | 0       |
+|   add_ln19_69_fu_1321_p2               |     |        | add_ln19_69  | add   | fabric  | 0       |
+|   add_ln19_70_fu_1326_p2               |     |        | add_ln19_70  | add   | fabric  | 0       |
+|   add_ln19_71_fu_1331_p2               |     |        | add_ln19_71  | add   | fabric  | 0       |
+|   add_ln19_72_fu_1336_p2               |     |        | add_ln19_72  | add   | fabric  | 0       |
+|   add_ln19_73_fu_1341_p2               |     |        | add_ln19_73  | add   | fabric  | 0       |
+|   add_ln19_74_fu_1346_p2               |     |        | add_ln19_74  | add   | fabric  | 0       |
+|   add_ln19_75_fu_1351_p2               |     |        | add_ln19_75  | add   | fabric  | 0       |
+|   add_ln19_76_fu_1356_p2               |     |        | add_ln19_76  | add   | fabric  | 0       |
+|   add_ln19_77_fu_1361_p2               |     |        | add_ln19_77  | add   | fabric  | 0       |
+|   add_ln19_78_fu_1366_p2               |     |        | add_ln19_78  | add   | fabric  | 0       |
+|   add_ln19_79_fu_1371_p2               |     |        | add_ln19_79  | add   | fabric  | 0       |
+|   add_ln19_80_fu_1376_p2               |     |        | add_ln19_80  | add   | fabric  | 0       |
+|   add_ln19_81_fu_1381_p2               |     |        | add_ln19_81  | add   | fabric  | 0       |
+|   add_ln19_82_fu_1386_p2               |     |        | add_ln19_82  | add   | fabric  | 0       |
+|   add_ln19_83_fu_1391_p2               |     |        | add_ln19_83  | add   | fabric  | 0       |
+|   add_ln19_84_fu_1396_p2               |     |        | add_ln19_84  | add   | fabric  | 0       |
+|   add_ln19_85_fu_1401_p2               |     |        | add_ln19_85  | add   | fabric  | 0       |
+|   add_ln19_86_fu_1406_p2               |     |        | add_ln19_86  | add   | fabric  | 0       |
+|   add_ln19_87_fu_1411_p2               |     |        | add_ln19_87  | add   | fabric  | 0       |
+|   add_ln19_88_fu_1416_p2               |     |        | add_ln19_88  | add   | fabric  | 0       |
+|   add_ln19_89_fu_1421_p2               |     |        | add_ln19_89  | add   | fabric  | 0       |
+|   add_ln19_90_fu_1426_p2               |     |        | add_ln19_90  | add   | fabric  | 0       |
+|   add_ln19_91_fu_1431_p2               |     |        | add_ln19_91  | add   | fabric  | 0       |
+|   add_ln19_92_fu_1436_p2               |     |        | add_ln19_92  | add   | fabric  | 0       |
+|   add_ln19_93_fu_1441_p2               |     |        | add_ln19_93  | add   | fabric  | 0       |
+|   add_ln19_94_fu_1446_p2               |     |        | add_ln19_94  | add   | fabric  | 0       |
+|   add_ln19_95_fu_1451_p2               |     |        | add_ln19_95  | add   | fabric  | 0       |
+|   add_ln19_96_fu_1456_p2               |     |        | add_ln19_96  | add   | fabric  | 0       |
+|   add_ln19_97_fu_1461_p2               |     |        | add_ln19_97  | add   | fabric  | 0       |
+|   add_ln19_98_fu_1466_p2               |     |        | add_ln19_98  | add   | fabric  | 0       |
+|   add_ln19_99_fu_1471_p2               |     |        | add_ln19_99  | add   | fabric  | 0       |
+|   add_ln19_100_fu_1476_p2              |     |        | add_ln19_100 | add   | fabric  | 0       |
+|   add_ln19_101_fu_1481_p2              |     |        | add_ln19_101 | add   | fabric  | 0       |
+|   add_ln19_102_fu_1486_p2              |     |        | add_ln19_102 | add   | fabric  | 0       |
+|   add_ln19_103_fu_1491_p2              |     |        | add_ln19_103 | add   | fabric  | 0       |
+|   add_ln19_104_fu_1496_p2              |     |        | add_ln19_104 | add   | fabric  | 0       |
+|   add_ln19_105_fu_1501_p2              |     |        | add_ln19_105 | add   | fabric  | 0       |
+|   add_ln19_106_fu_1506_p2              |     |        | add_ln19_106 | add   | fabric  | 0       |
+|   add_ln19_107_fu_1511_p2              |     |        | add_ln19_107 | add   | fabric  | 0       |
+|   add_ln19_108_fu_1516_p2              |     |        | add_ln19_108 | add   | fabric  | 0       |
+|   add_ln19_109_fu_1521_p2              |     |        | add_ln19_109 | add   | fabric  | 0       |
+|   add_ln19_110_fu_1526_p2              |     |        | add_ln19_110 | add   | fabric  | 0       |
+|   add_ln19_111_fu_1531_p2              |     |        | add_ln19_111 | add   | fabric  | 0       |
+|   add_ln19_112_fu_1536_p2              |     |        | add_ln19_112 | add   | fabric  | 0       |
+|   add_ln19_113_fu_1541_p2              |     |        | add_ln19_113 | add   | fabric  | 0       |
+|   add_ln19_114_fu_1546_p2              |     |        | add_ln19_114 | add   | fabric  | 0       |
+|   add_ln19_115_fu_1551_p2              |     |        | add_ln19_115 | add   | fabric  | 0       |
+|   add_ln19_116_fu_1556_p2              |     |        | add_ln19_116 | add   | fabric  | 0       |
+|   add_ln19_117_fu_1561_p2              |     |        | add_ln19_117 | add   | fabric  | 0       |
+|   add_ln19_118_fu_1566_p2              |     |        | add_ln19_118 | add   | fabric  | 0       |
+|   add_ln19_119_fu_1571_p2              |     |        | add_ln19_119 | add   | fabric  | 0       |
+|   icmp_ln19_fu_2789_p2                 |     |        | icmp_ln19    | seteq | auto    | 0       |
+|   add_ln19_120_fu_2795_p2              |     |        | add_ln19_120 | add   | fabric  | 0       |
+|  + gemm_kernel_Pipeline_compute_middle | 40  |        |              |       |         |         |
+|    icmp_ln20_fu_4479_p2                |     |        | icmp_ln20    | seteq | auto    | 0       |
+|    add_ln20_fu_4485_p2                 |     |        | add_ln20     | add   | fabric  | 0       |
+|    add_ln24_fu_4495_p2                 |     |        | add_ln24     | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U9    | 3   |        | mul          | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U1   | 2   |        | sum          | fadd  | fulldsp | 4       |
+|    add_ln24_1_fu_4511_p2               |     |        | add_ln24_1   | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U10   | 3   |        | mul_1        | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U1   | 2   |        | sum_1        | fadd  | fulldsp | 4       |
+|    add_ln24_2_fu_4527_p2               |     |        | add_ln24_2   | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U11   | 3   |        | mul_2        | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U1   | 2   |        | sum_2        | fadd  | fulldsp | 4       |
+|    add_ln24_3_fu_4543_p2               |     |        | add_ln24_3   | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U12   | 3   |        | mul_3        | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U1   | 2   |        | sum_3        | fadd  | fulldsp | 4       |
+|    add_ln24_4_fu_4559_p2               |     |        | add_ln24_4   | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U13   | 3   |        | mul_4        | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U1   | 2   |        | sum_4        | fadd  | fulldsp | 4       |
+|    add_ln24_5_fu_4575_p2               |     |        | add_ln24_5   | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U14   | 3   |        | mul_5        | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U1   | 2   |        | sum_5        | fadd  | fulldsp | 4       |
+|    add_ln24_6_fu_4591_p2               |     |        | add_ln24_6   | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U15   | 3   |        | mul_6        | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U1   | 2   |        | sum_6        | fadd  | fulldsp | 4       |
+|    add_ln24_7_fu_4607_p2               |     |        | add_ln24_7   | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U16   | 3   |        | mul_7        | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U1   | 2   |        | sum_7        | fadd  | fulldsp | 4       |
+|    add_ln24_8_fu_4628_p2               |     |        | add_ln24_8   | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U9    | 3   |        | mul_8        | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U1   | 2   |        | sum_8        | fadd  | fulldsp | 4       |
+|    add_ln24_9_fu_4642_p2               |     |        | add_ln24_9   | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U10   | 3   |        | mul_9        | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U1   | 2   |        | sum_9        | fadd  | fulldsp | 4       |
+|    add_ln24_10_fu_4656_p2              |     |        | add_ln24_10  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U11   | 3   |        | mul_s        | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U1   | 2   |        | sum_10       | fadd  | fulldsp | 4       |
+|    add_ln24_11_fu_4670_p2              |     |        | add_ln24_11  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U12   | 3   |        | mul_10       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U1   | 2   |        | sum_11       | fadd  | fulldsp | 4       |
+|    add_ln24_12_fu_4684_p2              |     |        | add_ln24_12  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U13   | 3   |        | mul_11       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U1   | 2   |        | sum_12       | fadd  | fulldsp | 4       |
+|    add_ln24_13_fu_4698_p2              |     |        | add_ln24_13  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U14   | 3   |        | mul_12       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U1   | 2   |        | sum_13       | fadd  | fulldsp | 4       |
+|    add_ln24_14_fu_4712_p2              |     |        | add_ln24_14  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U15   | 3   |        | mul_13       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U1   | 2   |        | sum_14       | fadd  | fulldsp | 4       |
+|    add_ln24_15_fu_4726_p2              |     |        | add_ln24_15  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U16   | 3   |        | mul_14       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U1   | 2   |        | sum_15       | fadd  | fulldsp | 4       |
+|    add_ln24_16_fu_4740_p2              |     |        | add_ln24_16  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U9    | 3   |        | mul_15       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U2   | 2   |        | sum_16       | fadd  | fulldsp | 4       |
+|    add_ln24_17_fu_4754_p2              |     |        | add_ln24_17  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U10   | 3   |        | mul_16       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U2   | 2   |        | sum_17       | fadd  | fulldsp | 4       |
+|    add_ln24_18_fu_4768_p2              |     |        | add_ln24_18  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U11   | 3   |        | mul_17       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U2   | 2   |        | sum_18       | fadd  | fulldsp | 4       |
+|    add_ln24_19_fu_4782_p2              |     |        | add_ln24_19  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U12   | 3   |        | mul_18       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U2   | 2   |        | sum_19       | fadd  | fulldsp | 4       |
+|    add_ln24_20_fu_4796_p2              |     |        | add_ln24_20  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U13   | 3   |        | mul_19       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U2   | 2   |        | sum_20       | fadd  | fulldsp | 4       |
+|    add_ln24_21_fu_4810_p2              |     |        | add_ln24_21  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U14   | 3   |        | mul_20       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U2   | 2   |        | sum_21       | fadd  | fulldsp | 4       |
+|    add_ln24_22_fu_4824_p2              |     |        | add_ln24_22  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U15   | 3   |        | mul_21       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U2   | 2   |        | sum_22       | fadd  | fulldsp | 4       |
+|    add_ln24_23_fu_4838_p2              |     |        | add_ln24_23  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U16   | 3   |        | mul_22       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U2   | 2   |        | sum_23       | fadd  | fulldsp | 4       |
+|    add_ln24_24_fu_4852_p2              |     |        | add_ln24_24  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U9    | 3   |        | mul_23       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U2   | 2   |        | sum_24       | fadd  | fulldsp | 4       |
+|    add_ln24_25_fu_4866_p2              |     |        | add_ln24_25  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U10   | 3   |        | mul_24       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U2   | 2   |        | sum_25       | fadd  | fulldsp | 4       |
+|    add_ln24_26_fu_4880_p2              |     |        | add_ln24_26  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U11   | 3   |        | mul_25       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U2   | 2   |        | sum_26       | fadd  | fulldsp | 4       |
+|    add_ln24_27_fu_4894_p2              |     |        | add_ln24_27  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U12   | 3   |        | mul_26       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U2   | 2   |        | sum_27       | fadd  | fulldsp | 4       |
+|    add_ln24_28_fu_4908_p2              |     |        | add_ln24_28  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U13   | 3   |        | mul_27       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U2   | 2   |        | sum_28       | fadd  | fulldsp | 4       |
+|    add_ln24_29_fu_4922_p2              |     |        | add_ln24_29  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U14   | 3   |        | mul_28       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U2   | 2   |        | sum_29       | fadd  | fulldsp | 4       |
+|    add_ln24_30_fu_4936_p2              |     |        | add_ln24_30  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U15   | 3   |        | mul_29       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U2   | 2   |        | sum_30       | fadd  | fulldsp | 4       |
+|    add_ln24_31_fu_4950_p2              |     |        | add_ln24_31  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U16   | 3   |        | mul_30       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U2   | 2   |        | sum_31       | fadd  | fulldsp | 4       |
+|    add_ln24_32_fu_4964_p2              |     |        | add_ln24_32  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U9    | 3   |        | mul_31       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U3   | 2   |        | sum_32       | fadd  | fulldsp | 4       |
+|    add_ln24_33_fu_4978_p2              |     |        | add_ln24_33  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U10   | 3   |        | mul_32       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U3   | 2   |        | sum_33       | fadd  | fulldsp | 4       |
+|    add_ln24_34_fu_4992_p2              |     |        | add_ln24_34  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U11   | 3   |        | mul_33       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U3   | 2   |        | sum_34       | fadd  | fulldsp | 4       |
+|    add_ln24_35_fu_5006_p2              |     |        | add_ln24_35  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U12   | 3   |        | mul_34       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U3   | 2   |        | sum_35       | fadd  | fulldsp | 4       |
+|    add_ln24_36_fu_5020_p2              |     |        | add_ln24_36  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U13   | 3   |        | mul_35       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U3   | 2   |        | sum_36       | fadd  | fulldsp | 4       |
+|    add_ln24_37_fu_5034_p2              |     |        | add_ln24_37  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U14   | 3   |        | mul_36       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U3   | 2   |        | sum_37       | fadd  | fulldsp | 4       |
+|    add_ln24_38_fu_5048_p2              |     |        | add_ln24_38  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U15   | 3   |        | mul_37       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U3   | 2   |        | sum_38       | fadd  | fulldsp | 4       |
+|    add_ln24_39_fu_5062_p2              |     |        | add_ln24_39  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U16   | 3   |        | mul_38       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U3   | 2   |        | sum_39       | fadd  | fulldsp | 4       |
+|    add_ln24_40_fu_5076_p2              |     |        | add_ln24_40  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U9    | 3   |        | mul_39       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U3   | 2   |        | sum_40       | fadd  | fulldsp | 4       |
+|    add_ln24_41_fu_5090_p2              |     |        | add_ln24_41  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U10   | 3   |        | mul_40       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U3   | 2   |        | sum_41       | fadd  | fulldsp | 4       |
+|    add_ln24_42_fu_5104_p2              |     |        | add_ln24_42  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U11   | 3   |        | mul_41       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U3   | 2   |        | sum_42       | fadd  | fulldsp | 4       |
+|    add_ln24_43_fu_5118_p2              |     |        | add_ln24_43  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U12   | 3   |        | mul_42       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U3   | 2   |        | sum_43       | fadd  | fulldsp | 4       |
+|    add_ln24_44_fu_5132_p2              |     |        | add_ln24_44  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U13   | 3   |        | mul_43       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U3   | 2   |        | sum_44       | fadd  | fulldsp | 4       |
+|    add_ln24_45_fu_5146_p2              |     |        | add_ln24_45  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U14   | 3   |        | mul_44       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U3   | 2   |        | sum_45       | fadd  | fulldsp | 4       |
+|    add_ln24_46_fu_5160_p2              |     |        | add_ln24_46  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U15   | 3   |        | mul_45       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U3   | 2   |        | sum_46       | fadd  | fulldsp | 4       |
+|    add_ln24_47_fu_5174_p2              |     |        | add_ln24_47  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U16   | 3   |        | mul_46       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U3   | 2   |        | sum_47       | fadd  | fulldsp | 4       |
+|    add_ln24_48_fu_5188_p2              |     |        | add_ln24_48  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U9    | 3   |        | mul_47       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U4   | 2   |        | sum_48       | fadd  | fulldsp | 4       |
+|    add_ln24_49_fu_5202_p2              |     |        | add_ln24_49  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U10   | 3   |        | mul_48       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U4   | 2   |        | sum_49       | fadd  | fulldsp | 4       |
+|    add_ln24_50_fu_5216_p2              |     |        | add_ln24_50  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U11   | 3   |        | mul_49       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U4   | 2   |        | sum_50       | fadd  | fulldsp | 4       |
+|    add_ln24_51_fu_5230_p2              |     |        | add_ln24_51  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U12   | 3   |        | mul_50       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U4   | 2   |        | sum_51       | fadd  | fulldsp | 4       |
+|    add_ln24_52_fu_5244_p2              |     |        | add_ln24_52  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U13   | 3   |        | mul_51       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U4   | 2   |        | sum_52       | fadd  | fulldsp | 4       |
+|    add_ln24_53_fu_5258_p2              |     |        | add_ln24_53  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U14   | 3   |        | mul_52       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U4   | 2   |        | sum_53       | fadd  | fulldsp | 4       |
+|    add_ln24_54_fu_5272_p2              |     |        | add_ln24_54  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U15   | 3   |        | mul_53       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U4   | 2   |        | sum_54       | fadd  | fulldsp | 4       |
+|    add_ln24_55_fu_5286_p2              |     |        | add_ln24_55  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U16   | 3   |        | mul_54       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U4   | 2   |        | sum_55       | fadd  | fulldsp | 4       |
+|    add_ln24_56_fu_5300_p2              |     |        | add_ln24_56  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U9    | 3   |        | mul_55       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U4   | 2   |        | sum_56       | fadd  | fulldsp | 4       |
+|    add_ln24_57_fu_5314_p2              |     |        | add_ln24_57  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U10   | 3   |        | mul_56       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U4   | 2   |        | sum_57       | fadd  | fulldsp | 4       |
+|    add_ln24_58_fu_5328_p2              |     |        | add_ln24_58  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U11   | 3   |        | mul_57       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U4   | 2   |        | sum_58       | fadd  | fulldsp | 4       |
+|    add_ln24_59_fu_5342_p2              |     |        | add_ln24_59  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U12   | 3   |        | mul_58       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U4   | 2   |        | sum_59       | fadd  | fulldsp | 4       |
+|    add_ln24_60_fu_5356_p2              |     |        | add_ln24_60  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U13   | 3   |        | mul_59       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U4   | 2   |        | sum_60       | fadd  | fulldsp | 4       |
+|    add_ln24_61_fu_5370_p2              |     |        | add_ln24_61  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U14   | 3   |        | mul_60       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U4   | 2   |        | sum_61       | fadd  | fulldsp | 4       |
+|    add_ln24_62_fu_5384_p2              |     |        | add_ln24_62  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U15   | 3   |        | mul_61       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U4   | 2   |        | sum_62       | fadd  | fulldsp | 4       |
+|    add_ln24_63_fu_5398_p2              |     |        | add_ln24_63  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U16   | 3   |        | mul_62       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U4   | 2   |        | sum_63       | fadd  | fulldsp | 4       |
+|    add_ln24_64_fu_5412_p2              |     |        | add_ln24_64  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U9    | 3   |        | mul_63       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U5   | 2   |        | sum_64       | fadd  | fulldsp | 4       |
+|    add_ln24_65_fu_5426_p2              |     |        | add_ln24_65  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U10   | 3   |        | mul_64       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U5   | 2   |        | sum_65       | fadd  | fulldsp | 4       |
+|    add_ln24_66_fu_5440_p2              |     |        | add_ln24_66  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U11   | 3   |        | mul_65       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U5   | 2   |        | sum_66       | fadd  | fulldsp | 4       |
+|    add_ln24_67_fu_5454_p2              |     |        | add_ln24_67  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U12   | 3   |        | mul_66       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U5   | 2   |        | sum_67       | fadd  | fulldsp | 4       |
+|    add_ln24_68_fu_5468_p2              |     |        | add_ln24_68  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U13   | 3   |        | mul_67       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U5   | 2   |        | sum_68       | fadd  | fulldsp | 4       |
+|    add_ln24_69_fu_5482_p2              |     |        | add_ln24_69  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U14   | 3   |        | mul_68       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U5   | 2   |        | sum_69       | fadd  | fulldsp | 4       |
+|    add_ln24_70_fu_5496_p2              |     |        | add_ln24_70  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U15   | 3   |        | mul_69       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U5   | 2   |        | sum_70       | fadd  | fulldsp | 4       |
+|    add_ln24_71_fu_5510_p2              |     |        | add_ln24_71  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U16   | 3   |        | mul_70       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U5   | 2   |        | sum_71       | fadd  | fulldsp | 4       |
+|    add_ln24_72_fu_5524_p2              |     |        | add_ln24_72  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U9    | 3   |        | mul_71       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U5   | 2   |        | sum_72       | fadd  | fulldsp | 4       |
+|    add_ln24_73_fu_5538_p2              |     |        | add_ln24_73  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U10   | 3   |        | mul_72       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U5   | 2   |        | sum_73       | fadd  | fulldsp | 4       |
+|    add_ln24_74_fu_5552_p2              |     |        | add_ln24_74  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U11   | 3   |        | mul_73       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U5   | 2   |        | sum_74       | fadd  | fulldsp | 4       |
+|    add_ln24_75_fu_5566_p2              |     |        | add_ln24_75  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U12   | 3   |        | mul_74       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U5   | 2   |        | sum_75       | fadd  | fulldsp | 4       |
+|    add_ln24_76_fu_5580_p2              |     |        | add_ln24_76  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U13   | 3   |        | mul_75       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U5   | 2   |        | sum_76       | fadd  | fulldsp | 4       |
+|    add_ln24_77_fu_5594_p2              |     |        | add_ln24_77  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U14   | 3   |        | mul_76       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U5   | 2   |        | sum_77       | fadd  | fulldsp | 4       |
+|    add_ln24_78_fu_5608_p2              |     |        | add_ln24_78  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U15   | 3   |        | mul_77       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U5   | 2   |        | sum_78       | fadd  | fulldsp | 4       |
+|    add_ln24_79_fu_5622_p2              |     |        | add_ln24_79  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U16   | 3   |        | mul_78       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U5   | 2   |        | sum_79       | fadd  | fulldsp | 4       |
+|    add_ln24_80_fu_5668_p2              |     |        | add_ln24_80  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U9    | 3   |        | mul_79       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U6   | 2   |        | sum_80       | fadd  | fulldsp | 4       |
+|    add_ln24_81_fu_5682_p2              |     |        | add_ln24_81  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U10   | 3   |        | mul_80       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U6   | 2   |        | sum_81       | fadd  | fulldsp | 4       |
+|    add_ln24_82_fu_5696_p2              |     |        | add_ln24_82  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U11   | 3   |        | mul_81       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U6   | 2   |        | sum_82       | fadd  | fulldsp | 4       |
+|    add_ln24_83_fu_5710_p2              |     |        | add_ln24_83  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U12   | 3   |        | mul_82       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U6   | 2   |        | sum_83       | fadd  | fulldsp | 4       |
+|    add_ln24_84_fu_5724_p2              |     |        | add_ln24_84  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U13   | 3   |        | mul_83       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U6   | 2   |        | sum_84       | fadd  | fulldsp | 4       |
+|    add_ln24_85_fu_5738_p2              |     |        | add_ln24_85  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U14   | 3   |        | mul_84       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U6   | 2   |        | sum_85       | fadd  | fulldsp | 4       |
+|    add_ln24_86_fu_5752_p2              |     |        | add_ln24_86  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U15   | 3   |        | mul_85       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U6   | 2   |        | sum_86       | fadd  | fulldsp | 4       |
+|    add_ln24_87_fu_5766_p2              |     |        | add_ln24_87  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U16   | 3   |        | mul_86       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U6   | 2   |        | sum_87       | fadd  | fulldsp | 4       |
+|    add_ln24_88_fu_5812_p2              |     |        | add_ln24_88  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U9    | 3   |        | mul_87       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U6   | 2   |        | sum_88       | fadd  | fulldsp | 4       |
+|    add_ln24_89_fu_5826_p2              |     |        | add_ln24_89  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U10   | 3   |        | mul_88       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U6   | 2   |        | sum_89       | fadd  | fulldsp | 4       |
+|    add_ln24_90_fu_5840_p2              |     |        | add_ln24_90  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U11   | 3   |        | mul_89       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U6   | 2   |        | sum_90       | fadd  | fulldsp | 4       |
+|    add_ln24_91_fu_5854_p2              |     |        | add_ln24_91  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U12   | 3   |        | mul_90       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U6   | 2   |        | sum_91       | fadd  | fulldsp | 4       |
+|    add_ln24_92_fu_5868_p2              |     |        | add_ln24_92  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U13   | 3   |        | mul_91       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U6   | 2   |        | sum_92       | fadd  | fulldsp | 4       |
+|    add_ln24_93_fu_5882_p2              |     |        | add_ln24_93  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U14   | 3   |        | mul_92       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U6   | 2   |        | sum_93       | fadd  | fulldsp | 4       |
+|    add_ln24_94_fu_5896_p2              |     |        | add_ln24_94  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U15   | 3   |        | mul_93       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U6   | 2   |        | sum_94       | fadd  | fulldsp | 4       |
+|    add_ln24_95_fu_5910_p2              |     |        | add_ln24_95  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U16   | 3   |        | mul_94       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U6   | 2   |        | sum_95       | fadd  | fulldsp | 4       |
+|    add_ln24_96_fu_5956_p2              |     |        | add_ln24_96  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U9    | 3   |        | mul_95       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U7   | 2   |        | sum_96       | fadd  | fulldsp | 4       |
+|    add_ln24_97_fu_5970_p2              |     |        | add_ln24_97  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U10   | 3   |        | mul_96       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U7   | 2   |        | sum_97       | fadd  | fulldsp | 4       |
+|    add_ln24_98_fu_5984_p2              |     |        | add_ln24_98  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U11   | 3   |        | mul_97       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U7   | 2   |        | sum_98       | fadd  | fulldsp | 4       |
+|    add_ln24_99_fu_5998_p2              |     |        | add_ln24_99  | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U12   | 3   |        | mul_98       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U7   | 2   |        | sum_99       | fadd  | fulldsp | 4       |
+|    add_ln24_100_fu_6012_p2             |     |        | add_ln24_100 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U13   | 3   |        | mul_99       | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U7   | 2   |        | sum_100      | fadd  | fulldsp | 4       |
+|    add_ln24_101_fu_6026_p2             |     |        | add_ln24_101 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U14   | 3   |        | mul_100      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U7   | 2   |        | sum_101      | fadd  | fulldsp | 4       |
+|    add_ln24_102_fu_6040_p2             |     |        | add_ln24_102 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U15   | 3   |        | mul_101      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U7   | 2   |        | sum_102      | fadd  | fulldsp | 4       |
+|    add_ln24_103_fu_6054_p2             |     |        | add_ln24_103 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U16   | 3   |        | mul_102      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U7   | 2   |        | sum_103      | fadd  | fulldsp | 4       |
+|    add_ln24_104_fu_6100_p2             |     |        | add_ln24_104 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U9    | 3   |        | mul_103      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U7   | 2   |        | sum_104      | fadd  | fulldsp | 4       |
+|    add_ln24_105_fu_6114_p2             |     |        | add_ln24_105 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U10   | 3   |        | mul_104      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U7   | 2   |        | sum_105      | fadd  | fulldsp | 4       |
+|    add_ln24_106_fu_6128_p2             |     |        | add_ln24_106 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U11   | 3   |        | mul_105      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U7   | 2   |        | sum_106      | fadd  | fulldsp | 4       |
+|    add_ln24_107_fu_6142_p2             |     |        | add_ln24_107 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U12   | 3   |        | mul_106      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U7   | 2   |        | sum_107      | fadd  | fulldsp | 4       |
+|    add_ln24_108_fu_6156_p2             |     |        | add_ln24_108 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U13   | 3   |        | mul_107      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U7   | 2   |        | sum_108      | fadd  | fulldsp | 4       |
+|    add_ln24_109_fu_6170_p2             |     |        | add_ln24_109 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U14   | 3   |        | mul_108      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U7   | 2   |        | sum_109      | fadd  | fulldsp | 4       |
+|    add_ln24_110_fu_6184_p2             |     |        | add_ln24_110 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U15   | 3   |        | mul_109      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U7   | 2   |        | sum_110      | fadd  | fulldsp | 4       |
+|    add_ln24_111_fu_6198_p2             |     |        | add_ln24_111 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U16   | 3   |        | mul_110      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U7   | 2   |        | sum_111      | fadd  | fulldsp | 4       |
+|    add_ln24_112_fu_6244_p2             |     |        | add_ln24_112 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U9    | 3   |        | mul_111      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U8   | 2   |        | sum_112      | fadd  | fulldsp | 4       |
+|    add_ln24_113_fu_6258_p2             |     |        | add_ln24_113 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U10   | 3   |        | mul_112      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U8   | 2   |        | sum_113      | fadd  | fulldsp | 4       |
+|    add_ln24_114_fu_6272_p2             |     |        | add_ln24_114 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U11   | 3   |        | mul_113      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U8   | 2   |        | sum_114      | fadd  | fulldsp | 4       |
+|    add_ln24_115_fu_6286_p2             |     |        | add_ln24_115 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U12   | 3   |        | mul_114      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U8   | 2   |        | sum_115      | fadd  | fulldsp | 4       |
+|    add_ln24_116_fu_6300_p2             |     |        | add_ln24_116 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U13   | 3   |        | mul_115      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U8   | 2   |        | sum_116      | fadd  | fulldsp | 4       |
+|    add_ln24_117_fu_6314_p2             |     |        | add_ln24_117 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U14   | 3   |        | mul_116      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U8   | 2   |        | sum_117      | fadd  | fulldsp | 4       |
+|    add_ln24_118_fu_6328_p2             |     |        | add_ln24_118 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U15   | 3   |        | mul_117      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U8   | 2   |        | sum_118      | fadd  | fulldsp | 4       |
+|    add_ln24_119_fu_6342_p2             |     |        | add_ln24_119 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U16   | 3   |        | mul_118      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U8   | 2   |        | sum_119      | fadd  | fulldsp | 4       |
+|    add_ln24_120_fu_6388_p2             |     |        | add_ln24_120 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U9    | 3   |        | mul_119      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U8   | 2   |        | sum_120      | fadd  | fulldsp | 4       |
+|    add_ln24_121_fu_6402_p2             |     |        | add_ln24_121 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U10   | 3   |        | mul_120      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U8   | 2   |        | sum_121      | fadd  | fulldsp | 4       |
+|    add_ln24_122_fu_6416_p2             |     |        | add_ln24_122 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U11   | 3   |        | mul_121      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U8   | 2   |        | sum_122      | fadd  | fulldsp | 4       |
+|    add_ln24_123_fu_6430_p2             |     |        | add_ln24_123 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U12   | 3   |        | mul_122      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U8   | 2   |        | sum_123      | fadd  | fulldsp | 4       |
+|    add_ln24_124_fu_6444_p2             |     |        | add_ln24_124 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U13   | 3   |        | mul_123      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U8   | 2   |        | sum_124      | fadd  | fulldsp | 4       |
+|    add_ln24_125_fu_6458_p2             |     |        | add_ln24_125 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U14   | 3   |        | mul_124      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U8   | 2   |        | sum_125      | fadd  | fulldsp | 4       |
+|    add_ln24_126_fu_6472_p2             |     |        | add_ln24_126 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U15   | 3   |        | mul_125      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U8   | 2   |        | sum_126      | fadd  | fulldsp | 4       |
+|    add_ln24_127_fu_6486_p2             |     |        | add_ln24_127 | add   | fabric  | 0       |
+|    fmul_32ns_32ns_32_4_max_dsp_1_U16   | 3   |        | mul_126      | fmul  | maxdsp  | 3       |
+|    fadd_32ns_32ns_32_5_full_dsp_1_U8   | 2   |        | sum_127      | fadd  | fulldsp | 4       |
++----------------------------------------+-----+--------+--------------+-------+---------+---------+
+
+
+================================================================
+== Storage Report
+================================================================
++---------------------+-----------+-----------+------+------+--------+----------+------+---------+------------------+
+| Name                | Usage     | Type      | BRAM | URAM | Pragma | Variable | Impl | Latency | Bitwidth, Depth, |
+|                     |           |           |      |      |        |          |      |         | Banks            |
++---------------------+-----------+-----------+------+------+--------+----------+------+---------+------------------+
+| + gemm_kernel       |           |           | 34   | 0    |        |          |      |         |                  |
+|   control_s_axi_U   | interface | s_axilite |      |      |        |          |      |         |                  |
+|   control_r_s_axi_U | interface | s_axilite |      |      |        |          |      |         |                  |
+|   gmem0_0_m_axi_U   | interface | m_axi     | 2    |      |        |          |      |         |                  |
+|   gmem0_1_m_axi_U   | interface | m_axi     | 2    |      |        |          |      |         |                  |
+|   gmem0_2_m_axi_U   | interface | m_axi     | 2    |      |        |          |      |         |                  |
+|   gmem0_3_m_axi_U   | interface | m_axi     | 2    |      |        |          |      |         |                  |
+|   gmem0_4_m_axi_U   | interface | m_axi     | 2    |      |        |          |      |         |                  |
+|   gmem0_5_m_axi_U   | interface | m_axi     | 2    |      |        |          |      |         |                  |
+|   gmem0_6_m_axi_U   | interface | m_axi     | 2    |      |        |          |      |         |                  |
+|   gmem0_7_m_axi_U   | interface | m_axi     | 2    |      |        |          |      |         |                  |
+|   gmem1_0_m_axi_U   | interface | m_axi     | 2    |      |        |          |      |         |                  |
+|   gmem1_1_m_axi_U   | interface | m_axi     | 2    |      |        |          |      |         |                  |
+|   gmem1_2_m_axi_U   | interface | m_axi     | 2    |      |        |          |      |         |                  |
+|   gmem1_3_m_axi_U   | interface | m_axi     | 2    |      |        |          |      |         |                  |
+|   gmem1_4_m_axi_U   | interface | m_axi     | 2    |      |        |          |      |         |                  |
+|   gmem1_5_m_axi_U   | interface | m_axi     | 2    |      |        |          |      |         |                  |
+|   gmem1_6_m_axi_U   | interface | m_axi     | 2    |      |        |          |      |         |                  |
+|   gmem1_7_m_axi_U   | interface | m_axi     | 2    |      |        |          |      |         |                  |
+|   gmem2_m_axi_U     | interface | m_axi     | 2    |      |        |          |      |         |                  |
++---------------------+-----------+-----------+------+------+--------+----------+------+---------+------------------+
+
+
+================================================================
+== Pragma Report
+================================================================
+* Valid Pragma Syntax
++-----------------+----------------------------------------+------------------------------------+
+| Type            | Options                                | Location                           |
++-----------------+----------------------------------------+------------------------------------+
+| interface       | m_axi port=A offset=slave bundle=gmem0 | gemm.cpp:9 in gemm_kernel, A       |
+| interface       | m_axi port=B offset=slave bundle=gmem1 | gemm.cpp:10 in gemm_kernel, B      |
+| interface       | m_axi port=C offset=slave bundle=gmem2 | gemm.cpp:11 in gemm_kernel, C      |
+| interface       | s_axilite port=return bundle=control   | gemm.cpp:12 in gemm_kernel, return |
+| array_partition | variable=A cyclic dim=2 factor=8       | gemm.cpp:14 in gemm_kernel, A      |
+| array_partition | variable=B cyclic dim=1 factor=8       | gemm.cpp:15 in gemm_kernel, B      |
+| pipeline        |                                        | gemm.cpp:22 in gemm_kernel         |
++-----------------+----------------------------------------+------------------------------------+
+
+
